@@ -73,3 +73,12 @@ This is a usable project foundation, not a complete production launch. Before in
 
 ### Important deployment note
 After applying SQL and setting Vercel environment variables, redeploy the site. Create `public/verify.png` yourself for the verification icon. Features that need additional dedicated backend flows (for example password-protected files and full follow/notification workflows) are not represented as complete merely because a link or schema table exists.
+
+
+## Update: pagination, verified badge, file metrics
+
+1. Run `supabase/metrics-pagination-update.sql` in Supabase SQL Editor after the initial schema. This adds view/download counters and service-role-only RPC functions.
+2. Keep `SUPABASE_SERVICE_ROLE_KEY` configured only as a server-side Vercel environment variable. Never expose it as `NEXT_PUBLIC_*`.
+3. Explore now paginates public files (8 per page); file details show views and downloads. A view is counted once per browser session per file. Downloads count when an authorized signed download URL is issued.
+4. The profile verified mark is rendered with an inline icon, so it sits beside the display name and does not depend on a missing `public/verify.png` asset.
+5. Page metadata now uses the Theresia title template. Upload already supports a custom title and description per file.

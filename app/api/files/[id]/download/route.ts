@@ -18,6 +18,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const admin = createSupabaseClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data, error: signError } = await admin.storage.from('user-files').createSignedUrl(file.file_path, 60, { download: file.file_name });
     if (signError || !data?.signedUrl) return NextResponse.json({ error: 'Gagal membuat link unduhan.' }, { status: 500 });
+    // Count only successful authorized download-link requests.
+    await admin.rpc('increment_file_downloads', { p_file_id: id });
     return NextResponse.redirect(data.signedUrl, 302);
   } catch { return NextResponse.json({ error: 'Terjadi kesalahan saat memproses unduhan.' }, { status: 500 }); }
 }
