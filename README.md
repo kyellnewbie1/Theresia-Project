@@ -62,3 +62,14 @@ Mobile-first Next.js + TypeScript starter for a public code/file-sharing site. B
 ## Current limitations
 
 This is a usable project foundation, not a complete production launch. Before inviting public users, finish server-side storage authorization for public downloads, implement a proper password-protected-file flow, add middleware/server-side owner verification for every admin action, and test Supabase RLS with anonymous and authenticated accounts.
+
+## Update: cookie sessions, profile, appearance, admin
+
+1. Run `supabase/security-update.sql` in Supabase SQL Editor after the original schema. This fixes the profile update policy and blocks self-editing `is_owner`, `is_verified`, and `role_label`.
+2. Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and the server-only `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Never use the service-role key in a `NEXT_PUBLIC_*` variable.
+3. `middleware.ts` refreshes the Supabase SSR session and persists auth tokens in Supabase cookies. Cookie-based sessions help support server verification but do not make account theft impossible; keep HTTPS enabled, do not share secrets, and protect the GitHub account with MFA.
+4. Admin endpoints re-check the authenticated user and `profiles.is_owner` on the server for each request. The Admin Panel supports user lookup, verification toggles, owner status management, site notice, and global character video URL.
+5. `/settings/profile` lets a signed-in user edit username, display name, avatar URL, and bio. `/settings/appearance` saves theme/background preferences in the current browser only. Video background URLs must be public HTTPS and are accepted only when the browser can verify the file is no larger than 5 MB.
+
+### Important deployment note
+After applying SQL and setting Vercel environment variables, redeploy the site. Create `public/verify.png` yourself for the verification icon. Features that need additional dedicated backend flows (for example password-protected files and full follow/notification workflows) are not represented as complete merely because a link or schema table exists.
