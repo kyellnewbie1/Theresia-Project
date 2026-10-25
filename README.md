@@ -69,7 +69,7 @@ This is a usable project foundation, not a complete production launch. Before in
 2. Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and the server-only `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Never use the service-role key in a `NEXT_PUBLIC_*` variable.
 3. `middleware.ts` refreshes the Supabase SSR session and persists auth tokens in Supabase cookies. Cookie-based sessions help support server verification but do not make account theft impossible; keep HTTPS enabled, do not share secrets, and protect the GitHub account with MFA.
 4. Admin endpoints re-check the authenticated user and `profiles.is_owner` on the server for each request. The Admin Panel supports user lookup, verification toggles, owner status management, site notice, and global character video URL.
-5. `/settings/profile` lets a signed-in user edit username, display name, avatar URL, and bio. `/settings/appearance` saves theme/background preferences in the current browser only. Video background URLs must be public HTTPS and are accepted only when the browser can verify the file is no larger than 5 MB.
+5. `/settings/profile` lets a signed-in user edit username, display name, avatar URL, and bio. `/settings/appearance` saves theme/background preferences in the current browser only. Video background URLs must be direct public HTTPS media links (prefer MP4/WebM); video backgrounds loop when autoplay is allowed.
 
 ### Important deployment note
 After applying SQL and setting Vercel environment variables, redeploy the site. Create `public/verify.png` yourself for the verification icon. Features that need additional dedicated backend flows (for example password-protected files and full follow/notification workflows) are not represented as complete merely because a link or schema table exists.
@@ -89,3 +89,12 @@ After applying SQL and setting Vercel environment variables, redeploy the site. 
 Open `/admin` while signed in as an owner. In the user list, use **Verifikasi/Cabut centang** to manage the verified badge and the **Role custom** field plus **Simpan role** to set a public role label (for example `Moderator`, `Creator`, or `VIP`). These actions are processed by the server route and require `SUPABASE_SERVICE_ROLE_KEY` configured as a server-only Vercel environment variable. The role label is a display label, not an authorization grant; owner access is still controlled separately by `is_owner`.
 
 Verified badges use the same Lucide `BadgeCheck` icon with a blue fill and white check across dashboard, profile, user search, file detail, and admin list. No `public/verify.png` asset is required.
+
+
+## Announcement popup and per-browser background update
+
+1. Run `supabase/announcement-background-update.sql` in Supabase SQL Editor after the existing schema/security migrations if the `site_notice` setting does not already exist.
+2. Deploy the project.
+3. As Owner, open Admin Panel to set, replace, or clear the announcement popup. The Owner panel also keeps the separate global character-video setting.
+4. Each user configures their own image or video background in `/settings/appearance`. Preferences are stored in that browser's localStorage, so different browsers/devices can have different backgrounds. Owner settings do not override user backgrounds.
+5. Video backgrounds use a public direct HTTPS MP4/WebM URL and loop automatically when the browser allows muted autoplay. Some hosts block direct media access, and some browsers may require user interaction before playback.
