@@ -1,0 +1,2 @@
+Buat folder public/ lalu taruh ikon centang biru milikmu sebagai public/verify.png.
+Next.js akan menyajikannya di URL /verify.png.
