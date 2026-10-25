@@ -82,3 +82,10 @@ After applying SQL and setting Vercel environment variables, redeploy the site. 
 3. Explore now paginates public files (8 per page); file details show views and downloads. A view is counted once per browser session per file. Downloads count when an authorized signed download URL is issued.
 4. The profile verified mark is rendered with an inline icon, so it sits beside the display name and does not depend on a missing `public/verify.png` asset.
 5. Page metadata now uses the Theresia title template. Upload already supports a custom title and description per file.
+
+
+## Owner tools: verification and custom roles (v5)
+
+Open `/admin` while signed in as an owner. In the user list, use **Verifikasi/Cabut centang** to manage the verified badge and the **Role custom** field plus **Simpan role** to set a public role label (for example `Moderator`, `Creator`, or `VIP`). These actions are processed by the server route and require `SUPABASE_SERVICE_ROLE_KEY` configured as a server-only Vercel environment variable. The role label is a display label, not an authorization grant; owner access is still controlled separately by `is_owner`.
+
+Verified badges use the same Lucide `BadgeCheck` icon with a blue fill and white check across dashboard, profile, user search, file detail, and admin list. No `public/verify.png` asset is required.
